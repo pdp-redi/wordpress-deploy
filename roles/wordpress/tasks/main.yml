@@ -1,0 +1,36 @@
+---
+# tasks file for wordpress
+- name: Download WordPress Application
+  get_url: 
+    url=https://wordpress.org/latest.tar.gz 
+    dest=/tmp/wordpress.tar.gz
+    validate_certs=no
+
+- name: Extracting the wordpress.tar.gz file
+  unarchive: src=/tmp/wordpress.tar.gz dest=/var/www/ copy=no
+  become: yes
+
+
+- name: Updating the default Apache homepage
+  become: yes
+  lineinfile: 
+    dest=/etc/apache2/sites-enabled/000-default.conf 
+    regexp="(.)+DocumentRoot /var/www/html"
+    line="DocumentRoot /var/www/wordpress"
+  notify: 
+    - restart apache
+
+- name: Copying the wp-config-sample.php to wp-config.php file
+  command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
+  become: yes
+
+- name: Replace database env values
+  shell: |
+    sed -i "s/database_name_here/{{wp_mysql_db}}/" /var/www/wordpress/wp-config.php
+    sed -i "s/username_here/{{wp_mysql_user}}/" /var/www/wordpress/wp-config.php
+    sed -i "s/password_here/{{wp_mysql_password}}/" /var/www/wordpress/wp-config.php
+  become: yes
+
+- name: Restart the apache service
+  service: name=apache2 state=restarted
+  become: yes
