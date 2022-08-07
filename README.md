@@ -1,4 +1,4 @@
-## Installation & Configuration of Ansible in Ubuntu
+## Installation & Configuration of Ansible in Ubuntu 18.04 
 
 1. Execute the command to install official PPA (personal package archive) in your system’s list of sources:
     
