@@ -240,6 +240,11 @@
     ```
     ansible-playbook playbook.yml
     ```
+    
+    ![ansible-play-1](./assets/play-execution-1.png)
+
+    ![ansible-play-2](./assets/play-execution-2.png)
+
     - If the script throws `permission denied error` then use the `-K` flag along with the above command and give the password for ansible user w.r.to `worker` node.
       ```
       ansible-playbook playbook.yml -K
@@ -249,6 +254,11 @@
     ```
     http://<worker-node-ip>:80
     ```
+    ![wp-homepage](./assets/wp-home-page.png)
+
+    ![wp-login-page](./assets/wp-login-page.png)
+
+    ![wp-dashboard](./assets/wp-dashboard.png)
 
 ## Verification of MySQL installation:
 
@@ -273,4 +283,6 @@
 
     describe <table-name>; => Display information related to a particular table
     ```
+
+    ![mysql](./assets/mysql-cli.png)
 
