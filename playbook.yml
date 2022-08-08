@@ -1,6 +1,8 @@
 - hosts: all
   gather_facts: False
   become: yes
+  vars_files:
+    - roles/mysql/defaults/main.yml
   tasks: 
   - name: Install Python
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python3-minimal)

@@ -28,11 +28,15 @@
   command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
   become: yes
 
-- name: Replace database env values
-  shell: |
-    sed -i "s/database_name_here/{{wp_mysql_db}}/" /var/www/wordpress/wp-config.php
-    sed -i "s/username_here/{{wp_mysql_user}}/" /var/www/wordpress/wp-config.php
-    sed -i "s/password_here/{{wp_mysql_password}}/" /var/www/wordpress/wp-config.php
+- name: Update Wordpress config file
+  lineinfile:
+    path: /var/www/wordpress/wp-config.php
+    regexp: "{{item.regexp}}"
+    line: "{{item.line}}"
+  with_items:
+    - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{wp_mysql_db}}' );"}
+    - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{wp_mysql_user}}' );"}
+    - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{wp_mysql_password}}' );"}
   become: yes
 
 - name: Restart the apache service

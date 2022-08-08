@@ -97,6 +97,8 @@
     - hosts: all
       gather_facts: False
       become: yes
+      vars_files:
+        - roles/mysql/defaults/main.yml
       tasks: 
       - name: Install Python
         raw: test -e /usr/bin/python || (apt -y update && apt install -y python3-minimal)
@@ -166,13 +168,21 @@
     ```
     vi mysql/defaults/main.yml
 
-    ---
-    # defaults file for mysql
-    wp_mysql_db: wp-db-deploy
-    wp_mysql_user: admin
-    wp_mysql_password: Abcdef@123!
+    wp_mysql_db: <db-name>
+    wp_mysql_user: <db-username>
+    wp_mysql_password: <db-password>
     ```
+  - Using `ansible-vault` command, I checked whether a variable and it's value [Ex: wp_mysql_password] can be encrypted. Within the console, It is showing that the variable value was encrypted. But, When i `cat` the file it showing no changes.
 
+    ![single-var](./assets/vault-single-var.png)
+
+  - So, I executed 'ansible-vault' command for the entire file i.e; main.yml inside `mysql/defaults` folder.
+    ```
+    ansible-vault encrypt roles/mysql/defaults/main.yml
+    ```
+    ![entire-file](./assets/vault-entire-file.png)
+
+    * Warning: It will ask you to set the vault password for that file. Make sure you remember the password.
 18. Now, Open the `main.yml` file under the `tasks` directory w.r.to `mysql` folder and add the following content:
     ```
     --- 
@@ -220,11 +230,15 @@
       command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
       become: yes
 
-    - name: Replace database env values
-      shell: |
-        sed -i "s/database_name_here/{{wp_mysql_db}}/" /var/www/wordpress/wp-config.php
-        sed -i "s/username_here/{{wp_mysql_user}}/" /var/www/wordpress/wp-config.php
-        sed -i "s/password_here/{{wp_mysql_password}}/" /var/www/wordpress/wp-config.php
+    - name: Update Wordpress config file
+      lineinfile:
+        path: /var/www/wordpress/wp-config.php
+        regexp: "{{item.regexp}}"
+        line: "{{item.line}}"
+      with_items:
+        - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{wp_mysql_db}}' );"}
+        - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{wp_mysql_user}}' );"}
+        - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{wp_mysql_password}}' );"}
       become: yes
 
     - name: Restart the apache service
@@ -243,7 +257,7 @@
 
 21. Execute the below command to deploy the wordpress application to worker node:
     ```
-    ansible-playbook playbook.yml
+    ansible-playbook playbook.yml --ask-vault-pass
     ```
     
     ![ansible-play-1](./assets/play-execution-1.png)
