@@ -208,8 +208,12 @@
         dest=/etc/apache2/sites-enabled/000-default.conf 
         regexp="(.)+DocumentRoot /var/www/html"
         line="DocumentRoot /var/www/wordpress"
-      notify: 
-        - restart apache
+      #notify: 
+       # - restart apache
+       
+    - name: Restart the apache service
+      service: name=apache2 state=restarted
+      become: yes
 
     - name: Copying the wp-config-sample.php to wp-config.php file
       command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
@@ -231,9 +235,9 @@
     ```
     ---
     # handlers file for wordpress
-    - name: Restart the apache service
-      service: name=apache2 state=restarted
-      become: yes
+    #- name: Restart the apache service
+     # service: name=apache2 state=restarted
+      #become: yes
     ```
 
 21. Execute the below command to deploy the wordpress application to worker node:
