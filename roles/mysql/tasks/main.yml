@@ -4,6 +4,7 @@
   become: yes
 
 - name: Create a new user
+  no_log: true
   mysql_user:
     name={{ wp_mysql_user }}
     password={{ wp_mysql_password }}
