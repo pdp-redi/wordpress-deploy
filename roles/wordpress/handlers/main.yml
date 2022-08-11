@@ -1,6 +1,6 @@
 ---
 # handlers file for wordpress
-- name: Restart the apache service
-  service: name=apache2 state=restarted
-  become: yes
+#- name: Restart the apache service
+ # service: name=apache2 state=restarted
+  #become: yes
 
