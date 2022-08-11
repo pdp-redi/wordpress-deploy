@@ -85,7 +85,7 @@
 
 12. First, Created a sample directory named wordpress_task and within that directory created another directory named `roles` and a file i.e; playbook.yml
     ```
-    mkdir -p wordpress_task/roles && touch wordpress/playbook.yml
+    mkdir -p wordpress_task/roles && touch wordpress_task/playbook.yml
     ```
 
 13. Now, Go to the directory (wordpress_task) and add the following content:
