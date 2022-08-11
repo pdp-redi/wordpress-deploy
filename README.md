@@ -7,7 +7,7 @@
    ```
 2. Now, Update the apt package repository:
    ```
-   sudo apt udpate -y
+   sudo apt update -y
    ```
 
 3. Now, Execute the command to install ansible:
